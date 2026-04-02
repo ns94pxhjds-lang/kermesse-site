@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grande Kermesse Scolaire 2026 | VIP Experience</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        /* ANNOTATION : Thème sombre et luxueux avec fond texturé */
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            background-image: radial-gradient(circle at top right, #331500, transparent 40%), radial-gradient(circle at bottom left, #4a1f00, transparent 40%);
+            background-attachment: fixed;
+        }
+        
+        /* ANNOTATION : Effet Glassmorphism (verre transparent) pour les cartes */
+        .glass {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 165, 0, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ANNOTATION : Effet de survol 3D sur les tickets */
+        .ticket-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .ticket-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(234, 88, 12, 0.4);
+            border-color: #ea580c;
+        }
+
+        .countdown-box {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid #ea580c;
+            box-shadow: 0 0 15px rgba(234, 88, 12, 0.3);
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(234, 88, 12, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
+        }
+        .btn-glow { animation: pulse-glow 2s infinite; }
+
+        .text-gradient {
+            background: linear-gradient(to right, #fb923c, #ea580c, #b45309);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ANNOTATION : Style personnalisé pour les boutons radio de paiement */
+        .payment-option input[type="radio"] { display: none; }
+        .payment-option label {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px; border: 2px solid #334155; border-radius: 12px;
+            cursor: pointer; transition: 0.3s;
+        }
+        .payment-option input[type="radio"]:checked + label {
+            border-color: #ea580c; background: rgba(234, 88, 12, 0.1);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <nav class="fixed w-full z-50 glass px-6 py-4 flex justify-between items-center">
+        <div class="font-black text-2xl tracking-tighter text-white">
+            KERMESSE<span class="text-orange-500">26</span>
+        </div>
+        <div class="hidden md:flex gap-6 font-semibold text-sm uppercase tracking-wider">
+            <a href="#programme" class="hover:text-orange-400 transition">Programme</a>
+            <a href="#tickets" class="hover:text-orange-400 transition">Billetterie</a>
+        </div>
+        <a href="#tickets" class="bg-orange-600 hover:bg-orange-500 text-white px-5 py-2 rounded-full font-bold transition shadow-lg shadow-orange-500/50">
+            Acheter un Pass
+        </a>
+    </nav>
+
+    <section class="relative z-10 pt-32 pb-20 px-4 flex flex-col items-center justify-center text-center min-h-[90vh]">
+        <div class="animate__animated animate__fadeInDown">
+            <span class="bg-orange-500/20 text-orange-400 border border-orange-500/50 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest mb-6 inline-block">
+                Lycée Moderne Amon Tanoh Lambert
+            </span>
+            <h1 class="text-6xl md:text-8xl font-black uppercase tracking-tight mb-2 text-white">
+                Grande <br><span class="text-gradient">Kermesse</span>
+            </h1>
+            <p class="mt-4 text-xl md:text-2xl font-light text-gray-300 max-w-2xl mx-auto">
+                Organisée par le CSDE. Showcase exclusif de DJ Marco Denon, Azazou Satellite & ADM La Melo.
+            </p>
+        </div>
+
+        <div class="mt-12 flex gap-4 md:gap-8 animate__animated animate__zoomIn animate__delay-1s">
+            <div class="countdown-box rounded-2xl p-4 w-24 md:w-32 flex flex-col items-center">
+                <span id="days" class="text-4xl md:text-5xl font-black text-orange-500">00</span>
+                <span class="text-xs uppercase font-bold text-gray-400 tracking-wider mt-1">Jours</span>
+            </div>
+            <div class="countdown-box rounded-2xl p-4 w-24 md:w-32 flex flex-col items-center">
+                <span id="hours" class="text-4xl md:text-5xl font-black text-white">00</span>
+                <span class="text-xs uppercase font-bold text-gray-400 tracking-wider mt-1">Heures</span>
+            </div>
+            <div class="countdown-box rounded-2xl p-4 w-24 md:w-32 flex flex-col items-center">
+                <span id="minutes" class="text-4xl md:text-5xl font-black text-white">00</span>
+                <span class="text-xs uppercase font-bold text-gray-400 tracking-wider mt-1">Min</span>
+            </div>
+            <div class="countdown-box rounded-2xl p-4 w-24 md:w-32 flex flex-col items-center">
+                <span id="seconds" class="text-4xl md:text-5xl font-black text-orange-500">00</span>
+                <span class="text-xs uppercase font-bold text-gray-400 tracking-wider mt-1">Sec</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="programme" class="py-20 relative z-10 bg-black/40">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-4xl font-black text-center mb-16 uppercase"><span class="text-gradient">Au Programme</span></h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-2xl text-center hover:bg-orange-900/20 transition">
+                    <i class="fa-solid fa-futbol text-5xl text-orange-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Sports & Compétition</h3>
+                    <p class="text-gray-400 text-sm">Tournois de football interclasse et match de basket. La 1ère D est attendue au tournant !</p>
+                </div>
+                <div class="glass p-8 rounded-2xl text-center hover:bg-orange-900/20 transition border border-orange-500/50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-orange-600 text-xs font-bold px-3 py-1 rounded-bl-lg">SHOW</div>
+                    <i class="fa-solid fa-microphone-lines text-5xl text-white mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Concert & Culture</h3>
+                    <p class="text-gray-400 text-sm">Concours de Slam, Théâtre et élection Miss. Showcase des artistes invités.</p>
+                </div>
+                <div class="glass p-8 rounded-2xl text-center hover:bg-orange-900/20 transition">
+                    <i class="fa-solid fa-burger text-5xl text-orange-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Food & Tombola</h3>
+                    <p class="text-gray-400 text-sm">Stands de boissons, nourriture et grande tombola avec de nombreux lots à gagner.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tickets" class="py-24 relative z-10 px-4">
+        <h2 class="text-4xl md:text-5xl font-black text-center mb-4 uppercase">Billetterie <span class="text-gradient">Officielle</span></h2>
+        <p class="text-center text-gray-400 mb-16 max-w-xl mx-auto">Sélectionne ton pass. Ton QR Code unique sera généré avant le paiement.</p>
+        
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            
+            <div class="ticket-card glass p-8 rounded-3xl relative flex flex-col">
+                <div class="absolute -top-4 right-6 bg-gray-700 text-white text-xs font-bold px-4 py-1 rounded-full">Standard</div>
+                <h3 class="text-2xl font-black text-gray-300 mb-1">PASS GP</h3>
+                <p class="text-gray-500 text-sm mb-6">Accès basique</p>
+                <div class="text-5xl font-black text-white mb-6">1500<span class="text-lg text-gray-400">f</span></div>
+                <ul class="space-y-3 text-sm text-gray-300 mb-8 flex-grow">
+                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Accès à la Kermesse</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Accès Stands & Tournois</li>
+                </ul>
+                <button onclick="openCheckout('GP', 1500)" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-xl font-bold transition">Réserver 🎟️</button>
+            </div>
+
+            <div class="ticket-card glass p-8 rounded-3xl border-2 border-orange-500 relative flex flex-col md:-mt-8 mb-8 md:mb-0 transform md:scale-105 z-10">
+                <div class="absolute -top-4 right-6 bg-orange-500 text-white text-xs font-bold px-4 py-1 rounded-full btn-glow">Top Vente</div>
+                <h3 class="text-2xl font-black text-orange-500 mb-1">PASS VIP</h3>
+                <p class="text-gray-400 text-sm mb-6">L'expérience améliorée</p>
+                <div class="text-5xl font-black text-white mb-6">3500<span class="text-lg text-gray-400">f</span></div>
+                <ul class="space-y-3 text-sm text-gray-200 mb-8 flex-grow">
+                    <li><i class="fa-solid fa-check text-orange-500 mr-2"></i>Coupe-file à l'entrée</li>
+                    <li><i class="fa-solid fa-check text-orange-500 mr-2"></i>Zone VIP réservée</li>
+                    <li><i class="fa-solid fa-check text-orange-500 mr-2"></i>Vue dégagée sur la scène</li>
+                </ul>
+                <button onclick="openCheckout('VIP', 3500)" class="w-full bg-gradient-to-r from-orange-600 to-orange-400 text-white py-4 rounded-xl font-bold transition hover:shadow-lg hover:shadow-orange-500/50">Réserver 🎟️</button>
+            </div>
+
+            <div class="ticket-card glass p-8 rounded-3xl relative flex flex-col">
+                <div class="absolute -top-4 right-6 bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full">Premium</div>
+                <h3 class="text-2xl font-black text-purple-400 mb-1">PASS VVIP</h3>
+                <p class="text-gray-400 text-sm mb-6">Le prestige total</p>
+                <div class="text-5xl font-black text-white mb-6">5000<span class="text-lg text-gray-400">f</span></div>
+                <ul class="space-y-3 text-sm text-gray-300 mb-8 flex-grow">
+                    <li><i class="fa-solid fa-crown text-yellow-500 mr-2"></i>Zone VVIP & Loges</li>
+                    <li><i class="fa-solid fa-crown text-yellow-500 mr-2"></i>Service Premium</li>
+                    <li><i class="fa-solid fa-crown text-yellow-500 mr-2"></i>Proximité avec les artistes</li>
+                </ul>
+                <button onclick="openCheckout('VVIP', 5000)" class="w-full bg-purple-700 hover:bg-purple-600 text-white py-4 rounded-xl font-bold transition">Réserver 🎟️</button>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="py-10 text-center border-t border-gray-800 bg-black/60 z-10">
+        <p class="text-gray-500 font-bold tracking-widest uppercase text-sm">Organisé par le CSDE</p>
+        <p class="text-gray-600 text-xs mt-2">15 Mai 2026 - Lycée Moderne Amon Tanoh Lambert D'Aboisso</p>
+        <button onclick="adminLogin()" class="mt-6 text-gray-700 hover:text-orange-500 text-xs transition"><i class="fa-solid fa-lock"></i> Accès Admin</button>
+    </footer>
+
+    <div id="checkoutModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden items-center justify-center p-4 z-50 opacity-0 transition-opacity duration-300">
+        <div class="bg-gray-900 border border-gray-700 rounded-3xl w-full max-w-4xl overflow-hidden shadow-2xl flex flex-col md:flex-row transform scale-95 transition-transform duration-300" id="modalContent">
+            
+            <div class="bg-gray-800 p-8 md:w-1/2 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-700 relative">
+                <button onclick="closeCheckout()" class="absolute top-4 left-4 text-gray-400 hover:text-white md:hidden"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 class="text-gray-400 text-sm uppercase font-bold tracking-widest mb-2">Billet Généré</h3>
+                <h2 id="modalTicketName" class="text-3xl font-black text-white mb-6 uppercase">PASS...</h2>
+                
+                <div class="bg-white p-3 rounded-xl shadow-lg mb-4">
+                    <div id="qrcode"></div> </div>
+                
+                <p class="text-xs text-center text-gray-400 mt-2">ID Unique : <span id="orderId" class="font-mono text-orange-400">...</span></p>
+                <p class="text-[10px] text-center text-gray-500 mt-1">Capturez cet écran. Le billet sera activé après paiement.</p>
+            </div>
+
+            <div class="p-8 md:w-1/2 relative">
+                <button onclick="closeCheckout()" class="absolute top-4 right-4 text-gray-400 hover:text-white hidden md:block"><i class="fa-solid fa-xmark text-xl"></i></button>
+                
+                <h3 class="text-xl font-bold mb-1 text-white">Finaliser la commande</h3>
+                <p class="text-gray-400 text-sm mb-6">Total : <strong id="modalPrice" class="text-2xl text-orange-500">...f</strong></p>
+
+                <div class="mb-6">
+                    <h4 class="text-sm font-bold text-gray-300 mb-3">1. Choisissez votre mode de paiement :</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="payment-option">
+                            <input type="radio" id="payWave" name="paymentMethod" value="Wave" checked>
+                            <label for="payWave"><span class="w-6 h-6 bg-[#1bc5bd] rounded-full flex items-center justify-center font-black text-white text-[10px]">W</span> Wave</label>
+                        </div>
+                        <div class="payment-option">
+                            <input type="radio" id="payCash" name="paymentMethod" value="Espèces">
+                            <label for="payCash">💵 Espèces</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center my-4">
+                    <div class="flex-grow border-t border-gray-700"></div>
+                    <span class="px-3 text-xs text-gray-500 font-bold uppercase">2. Valider auprès d'un admin</span>
+                    <div class="flex-grow border-t border-gray-700"></div>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="processWhatsApp('+2250171489791')" class="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white p-4 rounded-xl font-bold transition shadow-lg shadow-green-900/50">
+                        <i class="fa-brands fa-whatsapp text-xl"></i> Acheter via Infoline 1
+                    </button>
+
+                    <button onclick="processWhatsApp('+2250797546707')" class="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white p-4 rounded-xl font-bold transition">
+                        <i class="fa-brands fa-whatsapp text-xl"></i> Acheter via Infoline 2
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. COMPTE À REBOURS ---
+        const countDownDate = new Date("May 15, 2026 08:00:00").getTime();
+        const x = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            document.getElementById("days").innerHTML = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+            document.getElementById("hours").innerHTML = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById("minutes").innerHTML = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            document.getElementById("seconds").innerHTML = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+            if (distance < 0) clearInterval(x);
+        }, 1000);
+
+        // --- 2. GESTION DES VARIABLES GLOBALES ---
+        let currentTicket = "";
+        let currentPrice = 0;
+        let currentOrderID = "";
+        let qrcode = null;
+
+        // Fonction pour créer un ID de commande unique
+        function generateOrderID() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 5; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            return `KRM26-${currentTicket}-${result}`;
+        }
+
+        // --- 3. OUVERTURE ET FERMETURE DU MODAL ---
+        function openCheckout(ticketType, price) {
+            currentTicket = ticketType;
+            currentPrice = price;
+            currentOrderID = generateOrderID();
+
+            document.getElementById('modalTicketName').innerText = "PASS " + ticketType;
+            document.getElementById('modalPrice').innerText = price;
+            document.getElementById('orderId').innerText = currentOrderID;
+
+            // Génération dynamique du QR Code
+            document.getElementById("qrcode").innerHTML = "";
+            qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: currentOrderID,
+                width: 160, height: 160,
+                colorDark : "#000000", colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            const modal = document.getElementById('checkoutModal');
+            const content = document.getElementById('modalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeCheckout() {
+            const modal = document.getElementById('checkoutModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // --- 4. REDIRECTION WHATSAPP DYNAMIQUE ---
+        function processWhatsApp(phoneNumber) {
+            // Récupère la méthode de paiement sélectionnée
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            // Construit le message parfait pour l'admin
+            const message = `🔥 *PRÉCOMMANDE KERMESSE 2026* 🔥\n\n`
+                          + `Salut ! Je souhaite valider et activer mon billet.\n\n`
+                          + `🎟️ *Ticket :* PASS ${currentTicket}\n`
+                          + `💰 *Prix :* ${currentPrice} FCFA\n`
+                          + `💳 *Paiement souhaité :* ${paymentMethod}\n`
+                          + `🆔 *ID Commande :* ${currentOrderID}\n\n`
+                          + `J'ai la capture d'écran de mon QR Code. Comment procède-t-on pour la suite ?`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const cleanNumber = phoneNumber.replace('+', ''); // Enlève le + pour l'URL wa.me
+            const url = `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
+            
+            window.open(url, '_blank');
+        }
+
+        // --- 5. FONCTION ADMIN (SIMULATION) ---
+        function adminLogin() {
+            let pwd = prompt("Entrez le mot de passe Administrateur (CSDE) :");
+            if(pwd) alert("Accès refusé. Base de données sécurisée.");
+        }
+    </script>
+</body>
+<script>
+
+// ======================
+// 🔐 ADMIN LOGIN
+// ======================
+function adminLogin() {
+    let user = prompt("Nom d'utilisateur :");
+    let pass = prompt("Mot de passe :");
+
+    if(user === "fuma_225" && pass === "messou225"){
+        openAdminPanel();
+    } else {
+        alert("Accès refusé ❌");
+    }
+}
+
+// ======================
+// 👑 ADMIN PANEL
+// ======================
+function openAdminPanel(){
+    let panel = document.createElement("div");
+    panel.style.position = "fixed";
+    panel.style.top = "0";
+    panel.style.left = "0";
+    panel.style.width = "100%";
+    panel.style.height = "100%";
+    panel.style.background = "#000";
+    panel.style.color = "white";
+    panel.style.zIndex = "9999";
+    panel.style.padding = "20px";
+    panel.style.overflow = "auto";
+
+    let visits = localStorage.visits || 0;
+    let orders = JSON.parse(localStorage.orders || "[]");
+
+    panel.innerHTML = `
+    <h1 style="color:orange;">👑 ADMIN DASHBOARD</h1>
+
+    <h3>📊 Statistiques</h3>
+    <p>Visites : ${visits}</p>
+    <p>Commandes : ${orders.length}</p>
+
+    <h3>🧾 Commandes</h3>
+    ${orders.map(o => `
+        <div style="border:1px solid orange;padding:10px;margin:10px 0;">
+            🎟️ ${o.ticket} <br>
+            💳 ${o.payment} <br>
+            🆔 ${o.id}
+        </div>
+    `).join("")}
+
+    <button onclick="this.parentElement.remove()" style="margin-top:20px;background:red;padding:10px;">Fermer</button>
+    `;
+
+    document.body.appendChild(panel);
+}
+
+// ======================
+// 📊 TRACK VISITE
+// ======================
+localStorage.visits = (parseInt(localStorage.visits || 0) + 1);
+
+// ======================
+// 💾 SAVE ORDER
+// ======================
+function saveOrder(ticket, price, id, payment){
+    let orders = JSON.parse(localStorage.orders || "[]");
+
+    orders.push({
+        ticket: ticket,
+        price: price,
+        id: id,
+        payment: payment,
+        date: new Date().toLocaleString()
+    });
+
+    localStorage.orders = JSON.stringify(orders);
+}
+
+// ======================
+// 🔥 UPGRADE WHATSAPP
+// ======================
+function processWhatsApp(phoneNumber) {
+
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+    saveOrder(currentTicket, currentPrice, currentOrderID, paymentMethod);
+
+    const message =
+`🔥 PRÉCOMMANDE KERMESSE 2026 🔥
+
+🎟️ Ticket : PASS ${currentTicket}
+💰 Prix : ${currentPrice} FCFA
+💳 Paiement : ${paymentMethod}
+🆔 ID : ${currentOrderID}
+
+Je veux confirmer mon achat.`;
+
+    const url = `https://wa.me/${phoneNumber.replace("+","")}?text=${encodeURIComponent(message)}`;
+
+    window.open(url, "_blank");
+}
+
+// ======================
+// 🎟️ DESIGN TICKET PRO
+// ======================
+function generateBeautifulTicket(){
+    let div = document.createElement("div");
+
+    div.innerHTML = `
+    <div style="
+        background:#111;
+        border:2px dashed orange;
+        padding:20px;
+        border-radius:15px;
+        text-align:center;
+        margin-top:20px;
+    ">
+        <h2 style="color:orange;">🎟️ PASS ${currentTicket}</h2>
+        <p>Code : ${currentOrderID}</p>
+        <p>Prix : ${currentPrice} FCFA</p>
+        <p style="font-size:12px;color:gray;">Présente ce ticket à l'entrée</p>
+    </div>
+    `;
+
+    document.getElementById("modalContent").appendChild(div);
+}
+
+// appelle après openCheckout
+const oldOpen = openCheckout;
+openCheckout = function(ticketType, price){
+    oldOpen(ticketType, price);
+    setTimeout(generateBeautifulTicket, 500);
+};
+
+</script>
